@@ -1,0 +1,12 @@
+"use strict";(()=>{var e={};e.id=731,e.ids=[731],e.modules={2418:e=>{e.exports=require("mysql2/promise")},3227:e=>{e.exports=require("next-auth")},2113:e=>{e.exports=require("next-auth/next")},3598:e=>{e.exports=require("next-auth/providers/google")},145:e=>{e.exports=require("next/dist/compiled/next-server/pages-api.runtime.prod.js")},3597:(e,s,r)=>{r.r(s),r.d(s,{config:()=>m,default:()=>l,routeModule:()=>p});var t={};r.r(t),r.d(t,{default:()=>handler});var a=r(1802),i=r(7153),n=r(6249),o=r(2113),u=r(8417),d=r(4637);async function handler(e,s){let{id:r}=e.query;if("GET"===e.method)try{let t=await (0,o.getServerSession)(e,s,u.authOptions);if(!t||"admin"!==t.user.role)return s.status(401).json({message:"Unauthorized"});let a=await (0,d.I)(`
+        SELECT vs.*, u.name as user_name, u.email as user_email
+        FROM vehicle_submissions vs
+        JOIN users u ON vs.user_id = u.id
+        WHERE vs.id = ?
+      `,[r]);if(0===a.length)return s.status(404).json({message:"Submission not found"});s.status(200).json(a[0])}catch(e){console.error("Error fetching submission:",e),s.status(500).json({message:"Internal server error"})}else if("PUT"===e.method)try{let t=await (0,o.getServerSession)(e,s,u.authOptions);if(!t||"admin"!==t.user.role)return s.status(401).json({message:"Unauthorized"});let{handoverDate:a,plateNo:i,vehicleType:n,handoverBy:l,takeoverBy:m,idNo:p,odoMeterReading:_,registrationCard:c,vehicleAuthorization:h,remarks:v,contactNo:g}=e.body;await (0,d.I)(`
+        UPDATE vehicle_submissions SET
+          handover_date = ?, plate_no = ?, vehicle_type = ?, handover_by = ?,
+          takeover_by = ?, id_no = ?, odo_meter_reading = ?, registration_card = ?,
+          vehicle_authorization = ?, remarks = ?, contact_no = ?, updated_at = NOW()
+        WHERE id = ?
+      `,[a,i,n,l,m,p,parseInt(_),c,h,v||null,g,r]),s.status(200).json({message:"Submission updated successfully"})}catch(e){console.error("Error updating submission:",e),s.status(500).json({message:"Internal server error"})}else s.status(405).json({message:"Method not allowed"})}let l=(0,n.l)(t,"default"),m=(0,n.l)(t,"config"),p=new a.PagesAPIRouteModule({definition:{kind:i.x.PAGES_API,page:"/api/admin/submission/[id]",pathname:"/api/admin/submission/[id]",bundlePath:"",filename:""},userland:t})}};var s=require("../../../../webpack-api-runtime.js");s.C(e);var __webpack_exec__=e=>s(s.s=e),r=s.X(0,[222,637,417],()=>__webpack_exec__(3597));module.exports=r})();

@@ -1,0 +1,11 @@
+"use strict";exports.id=637,exports.ids=[637],exports.modules={4637:(e,t,s)=>{let a;s.d(t,{I:()=>query,closePool:()=>closePool,db:()=>u});var i=s(2418),r=s.n(i);let n={host:process.env.DB_HOST,user:process.env.DB_USER,password:process.env.DB_PASSWORD,database:process.env.DB_NAME,waitForConnections:!0,connectionLimit:2,queueLimit:0,acquireTimeout:6e4,timeout:6e4,reconnect:!0,idleTimeout:3e4,maxIdle:1,enableKeepAlive:!0,keepAliveInitialDelay:0};async function getConnection(){return a||(a=r().createPool(n)),a}async function query(e,t=[]){let s;try{let a=await getConnection();s=await a.getConnection();let[i]=await s.execute(e,t);return i}catch(e){throw console.error("Database query error:",e),e}finally{s&&s.release()}}async function closePool(){a&&(await a.end(),a=null)}let u={async getAll(){let e=`
+      SELECT vs.*, u.name as user_name, u.email as user_email 
+      FROM vehicle_submissions vs 
+      LEFT JOIN users u ON vs.user_id = u.id 
+      ORDER BY vs.created_at DESC
+    `;return await query(e)},async getById(e){let t=`
+      SELECT vs.*, u.name as user_name, u.email as user_email 
+      FROM vehicle_submissions vs 
+      LEFT JOIN users u ON vs.user_id = u.id 
+      WHERE vs.id = ?
+    `,s=await query(t,[e]);return s[0]||null},async update(e,t){let s=Object.keys(t).map(e=>`${e} = ?`).join(", "),a=Object.values(t),i=`UPDATE vehicle_submissions SET ${s}, updated_at = NOW() WHERE id = ?`,r=await query(i,[...a,e]);return r.affectedRows>0?await this.getById(e):null},async updateById(e,t){return await this.update(e,t)},async delete(e){let t=await query("DELETE FROM vehicle_submissions WHERE id = ?",[e]);return t.affectedRows>0},async deleteById(e){return await this.delete(e)},getUsers:async()=>await query("SELECT id, email, name, role, designation, created_at FROM users ORDER BY created_at DESC"),async getUserById(e){let t=await query("SELECT id, email, name, role, designation, created_at FROM users WHERE id = ?",[e]);return t[0]||null},async updateUser(e,t){let s=Object.keys(t).map(e=>`${e} = ?`).join(", "),a=Object.values(t),i=`UPDATE users SET ${s}, updated_at = NOW() WHERE id = ?`;return await query(i,[...a,e])},deleteUser:async e=>await query("DELETE FROM users WHERE id = ?",[e])}}};
